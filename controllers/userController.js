@@ -46,7 +46,8 @@ const getallusers = asyncHandler(async (req,res)=>{
 })
 
 const getuser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const {userId} = req.params
+  const user = await User.findOne({userId});
   if (!user) {
     res.status(404);
     throw new Error("user not found");
@@ -54,7 +55,8 @@ const getuser = asyncHandler(async (req, res) => {
   res.status(200).json(user);
 });
 const updateuser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const {userId} =  req.params
+    const user = await User.findOne({userId});
   if (!user) {
     res.status(404);
     throw new Error("User not found");
@@ -65,8 +67,8 @@ const updateuser = asyncHandler(async (req, res) => {
   //   throw new Error("User don't have permission to update other users");
   // }
 
-  const updatedUser = await User.findByIdAndUpdate(
-    req.params.id,
+  const updatedUser = await User.findOneAndUpdate(
+  req.params.id,
     req.body,
     { new: true }
   );
@@ -75,7 +77,8 @@ const updateuser = asyncHandler(async (req, res) => {
 });
 
 const deleteuser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const {userId} = req.params
+  const user = await User.findOne({userId});
   if (!user) {
     res.status(404);
     throw new Error("User not found");
@@ -84,7 +87,7 @@ const deleteuser = asyncHandler(async (req, res) => {
   //   res.status(403);
   //   throw new Error("User don't have permission to update other user contacts");
   // }
-  await User.deleteOne({ _id: req.params.id });
+  await User.deleteOne({userId: req.params.userId});
   res.status(200).json(user);
 });
 
@@ -112,6 +115,8 @@ const loginUser = asyncHandler(async (req, res) => {
       { expiresIn: "1y" }
     );
     res.status(200).json({ accessToken });
+    res.status(200).send({accessToken:token,message:"Logged in successfully"})
+
   } else {
     res.status(401);
     throw new Error("email or password is not valid");
