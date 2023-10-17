@@ -68,11 +68,11 @@ const updateuser = asyncHandler(async (req, res) => {
   // }
 
   const updatedUser = await User.findOneAndUpdate(
-  req.params.id,
     req.body,
+   
     { new: true }
   );
-
+console.log(1,updatedUser)
   res.status(200).json(updatedUser);
 });
 

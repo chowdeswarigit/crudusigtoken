@@ -1,11 +1,12 @@
-const asyncHandler = require("express-async-handler");
+// const asyncHandler = require("express-async-handler");
 const Contact = require("../models/contactModel");
-asyncHandler(async (req, res) => {
-  const contacts = await Contact.find({ user_id: req.user.id });
-  res.status(200).json(contacts);
-});
+// asyncHandler(async (req, res) => {
+//   const contacts = await Contact.find({ user_id: req.user.id });
+//   res.status(200).json(contacts);
+// });
 
-
+const asyncHandler = require('../utils/Asynchandler')
+ const CustomError =  require('../utils/CustomError')
 const createContact = asyncHandler(async (req, res) => {
   console.log("The request body is :", req.body);
   const { name, email, phone } = req.body;
@@ -24,17 +25,21 @@ const createContact = asyncHandler(async (req, res) => {
 });
 
 
-const getContacts = asyncHandler(async(req,res)=>{
+const getContacts = asyncHandler(async(req,res,next)=>{
   const contacts = await Contact.find()
   return res.json(contacts)
+  console.log(next)
+  
 
 })
 
-const getContact = asyncHandler(async (req, res) => {
+const getContact = asyncHandler(async (req, res,next) => {
   const contact = await Contact.findById(req.params.id);
   if (!contact) {
-    res.status(404);
-    throw new Error("Contact not found");
+    const error = new CustomError('Contact with that ID is not found!', 404);
+    return next(error);
+   
+   
   }
   res.status(200).json(contact);
 });
@@ -42,11 +47,11 @@ const getContact = asyncHandler(async (req, res) => {
 //@desc Update contact
 //@route PUT /api/contacts/:id
 //@access private
-const updateContact = asyncHandler(async (req, res) => {
+const updateContact = asyncHandler(async (req, res,next) => {
   const contact = await Contact.findById(req.params.id);
   if (!contact) {
-    res.status(404);
-    throw new Error("Contact not found");
+    const error = new CustomError('Contact with that ID is not found!', 404);
+            return next(error);
   }
 
   if (contact.user_id.toString() !== req.user.id) {
@@ -63,11 +68,11 @@ const updateContact = asyncHandler(async (req, res) => {
   res.status(200).json(updatedContact);
 });
 
-const deleteContact = asyncHandler(async (req, res) => {
+const deleteContact = asyncHandler(async (req, res,next) => {
   const contact = await Contact.findById(req.params.id);
   if (!contact) {
-    res.status(404);
-    throw new Error("Contact not found");
+    const error = new CustomError('Movie with that ID is not found!', 404);
+    return next(error);
   }
   if (contact.user_id.toString() !== req.user.id) {
     res.status(403);

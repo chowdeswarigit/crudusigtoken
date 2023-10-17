@@ -29,18 +29,19 @@ const recipients = [
   
     // Send the email
    
+ 
+  cron.schedule("* * * * * * " ,task())
   
+// cron.schedule('46 * * * *' ,()=>{
   
-cron.schedule('46 * * * *' ,()=>{
-  
-smtpProtocol.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.error(`Error sending email to ${recipient}:`, error);
-        } else {
-          console.log(`Email sent to ${recipient}:`, info.response);
-        }
-      });
-    });
+// smtpProtocol.sendMail(mailOptions, (error, info) => {
+//         if (error) {
+//           console.error(`Error sending email to ${recipient}:`, error);
+//         } else {
+//           console.log(`Email sent to ${recipient}:`, info.response);
+//         }
+//       });
+//     });
 })
 
 
